@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using TestTask.My;
 
 
@@ -13,8 +14,7 @@ namespace ConsoleApp3
     {
 
         private (int, int) _point;
-
-        public event PropertyChangedEventHandler PropertyChanged;
+        private ApplicationViewModel _applicationViewModel;
 
         private int[][] _sudokuFiled { get; set; }
 
@@ -22,7 +22,7 @@ namespace ConsoleApp3
         {
             get
             {
-                return  _sudokuFiled[col][row];
+                return _sudokuFiled[col][row];
             }
 
             set
@@ -31,7 +31,12 @@ namespace ConsoleApp3
             }
         }
 
-        public  Sudoku()
+        public Sudoku()
+        {
+            Clean();
+        }
+
+        public void Clean()
         {
             _sudokuFiled = new int[9][];
             for (int i = 0; i < _sudokuFiled.Length; i++)
@@ -39,15 +44,16 @@ namespace ConsoleApp3
                 _sudokuFiled[i] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             }
         }
-
-        public void Start(ApplicationViewModel application)
+        public void Start(ApplicationViewModel application, bool IsStep)
         {
+            _applicationViewModel = application;
             if (!IsValid(_sudokuFiled))
                 return;
-            Solve(_sudokuFiled, application);
+            Solve(_sudokuFiled);
+            _applicationViewModel.OnPropertyChanged("");
         }
 
-        private bool Solve(int[][] arr,ApplicationViewModel application)
+        private bool Solve(int[][] arr)
         {
 
             if (IsWin(arr) && IsValid(arr))
@@ -61,29 +67,31 @@ namespace ConsoleApp3
                 if (IsValid(arr))
                 {
                     arr[row][col] = num;
-                    application.OnPropertyChanged("");
-                    if (Solve(arr,application))
+                    _applicationViewModel.OnPropertyChanged("");
+                    if (Solve(arr))
                     {
                         return true;
                     }
                     arr[row][col] = 0;
+                    _applicationViewModel.OnPropertyChanged("");
                 }
+                Thread.Sleep(1);
             }
             return false;
         }
 
-        private void ShowSuduko(int[][] arr)
-        {
-            for (int i = 0; i < arr.Length; i++)
-            {
-                for (int j = 0; j < arr[i].Length; j++)
-                {
-                    Console.Write(arr[i][j] + " ");
-                }
+        //private void ShowSuduko(int[][] arr)
+        //{
+        //    for (int i = 0; i < arr.Length; i++)
+        //    {
+        //        for (int j = 0; j < arr[i].Length; j++)
+        //        {
+        //            Console.Write(arr[i][j] + " ");
+        //        }
 
-                Console.WriteLine(Environment.NewLine);
-            }
-        }
+        //        Console.WriteLine(Environment.NewLine);
+        //    }
+        //}
 
         private static bool IsWin(int[][] arr)
         {

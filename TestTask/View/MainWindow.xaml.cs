@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using TestTask.My;
 
 
@@ -24,6 +25,18 @@ namespace TestTask
             var button = new Button();
             int col = 0;
             int row = 0;
+            Border brdr = new Border()
+            {
+                BorderThickness = new Thickness()
+                {
+                    Bottom = 1,
+                    Left = 1,
+                    Right = 1,
+                    Top = 1
+                },
+                BorderBrush = new SolidColorBrush(Colors.Black)
+            };
+
             for (int i = 1; i < 10; i++)
             {
                 int innerCol = 0;
@@ -72,6 +85,11 @@ namespace TestTask
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
 
         }

@@ -6,27 +6,33 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TestTask.My"
         mc:Ignorable="d"
-        Title="MainWindow" Height="582" Width="629">
+
+        Title="MainWindow" Height="500" Width="800">
 
     <Grid Margin="0,0,0,114" HorizontalAlignment="Left" Width="614" Height="358" VerticalAlignment="Bottom">
-        <Grid ShowGridLines="True" x:Name="myGrid" Margin="0,97,0,-8" HorizontalAlignment="Left" Width="614">
-            <Grid.RowDefinitions>
-                <RowDefinition></RowDefinition>
-                <RowDefinition></RowDefinition>
-                <RowDefinition></RowDefinition>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-        </Grid>
-        <StackPanel HorizontalAlignment="Left" Height="65" Margin="160,-75,0,0" VerticalAlignment="Top" Width="285">
-            <Button x:Name="start" Command="{Binding ShowCommand}" Height="65" Content="wefwfwef" Margin="55,0,65,0" Click="Button_Click"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="465*"/>
+            <ColumnDefinition Width="149*"/>
+        </Grid.ColumnDefinitions>
+        <Border BorderBrush="Black" BorderThickness="2" Grid.ColumnSpan="2">
+            <Grid ShowGridLines="True" x:Name="myGrid"  HorizontalAlignment="Right" Width="614" Margin="0,0,-8,-3" Height="354" VerticalAlignment="Bottom">
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+            </Grid>
+        </Border>
+        <StackPanel Height="350"  Margin="155,5,-161,0" Grid.Column="1">
+            <Button x:Name="start" Command="{Binding ClickCommand}" Height="45" Content="Start" Margin="15,0,25,0" Click="Button_Click"/>
+            <Button x:Name="clear" Command="{Binding CleanCommand}" Height="50" Content="Clear" Margin="0,0,25,0" HorizontalAlignment="Right" Width="115"/>
+            <CheckBox Content="CheckBox"  IsChecked="{Binding Path=CheckBoxIsChecked ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged }"/>
         </StackPanel>
-
-
-
     </Grid>
 
 </Window>

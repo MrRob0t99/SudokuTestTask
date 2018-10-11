@@ -2,6 +2,7 @@
 using ConsoleApp3;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -9,7 +10,7 @@ namespace TestTask.My
 {
     public class ApplicationViewModel : INotifyPropertyChanged
     {
-        private readonly Sudoku _sudoku;
+        private  Sudoku _sudoku;
         private int[][] arr;
         public ApplicationViewModel()
         {
@@ -20,7 +21,7 @@ namespace TestTask.My
         private ICommand _clickCommand;
         private ICommand _showCommand;
         private ICommand _changeValue;
-
+        private ICommand _clean;
         public ICommand ClickCommand
         {
             get
@@ -36,7 +37,13 @@ namespace TestTask.My
                 return _showCommand ?? (_showCommand = new CommandHandler((obj) => ShowInputPanel(obj), _canExecute));
             }
         }
-
+        public ICommand CleanCommand
+        {
+            get
+            {
+                return _clean ?? (_clean = new CommandHandler((obj) => Clean(), _canExecute));
+            }
+        }
         public ICommand ChangeValue
         {
             get
@@ -45,6 +52,11 @@ namespace TestTask.My
             }
         }
 
+        public void Clean()
+        {
+            _sudoku.Clean();
+            OnPropertyChanged("");
+        }
         public void Change(object value)
         {
             var Ivalue = Convert.ToInt32(value);
@@ -63,9 +75,10 @@ namespace TestTask.My
         private readonly bool _canExecute;
         public void MyAction()
         {
-            _sudoku.Start(this);
+           Task.Factory.StartNew(() => _sudoku.Start(this,false)).GetAwaiter();
         }
 
+        public bool CheckBoxIsChecked { get; set; } = true;
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void OnPropertyChanged([CallerMemberName]string propertyName = null)
@@ -77,7 +90,6 @@ namespace TestTask.My
                 handler(this, e);
             }
         }
-
 
         #region PropertyCell
 
