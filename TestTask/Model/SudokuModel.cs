@@ -1,49 +1,68 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using TestTask.My;
 
 
 namespace ConsoleApp3
 {
     class Sudoku
     {
-        public static (int, int) point;
 
-        static int[][] S(int[][] arr)
+        private (int, int) _point;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private int[][] _sudokuFiled { get; set; }
+
+        public int this[int col, int row]
         {
-            //int[][] sudokuFiled = new int[9][];
-            //sudokuFiled[0] = new int[] { 0, 0, 0, 6, 2, 0, 9, 1, 0 };
-            //sudokuFiled[1] = new int[] { 1, 4, 0, 0, 0, 0, 6, 0, 0 };
-            //sudokuFiled[2] = new int[] { 2, 0, 6, 8, 0, 0, 0, 0, 0 };
-            //sudokuFiled[3] = new int[] { 4, 0, 8, 0, 0, 9, 0, 6, 0 };
-            //sudokuFiled[4] = new int[] { 0, 0, 0, 0, 0, 0, 0, 4, 9 };
-            //sudokuFiled[5] = new int[] { 0, 6, 0, 4, 0, 0, 0, 0, 1 };
-            //sudokuFiled[6] = new int[] { 0, 0, 4, 0, 0, 0, 0, 0, 8 };
-            //sudokuFiled[7] = new int[] { 0, 0, 0, 1, 0, 5, 4, 0, 6 };
-            //sudokuFiled[8] = new int[] { 0, 2, 1, 0, 8, 0, 5, 0, 0 };
-            if (!IsValid(arr))
-                return null;
-            if (Solve(arr))
-                return null;
-            return arr;
+            get
+            {
+                return  _sudokuFiled[col][row];
+            }
+
+            set
+            {
+                _sudokuFiled[col][row] = value;
+            }
         }
 
-        static bool Solve(int[][] arr)
+        public  Sudoku()
         {
+            _sudokuFiled = new int[9][];
+            for (int i = 0; i < _sudokuFiled.Length; i++)
+            {
+                _sudokuFiled[i] = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            }
+        }
+
+        public void Start(ApplicationViewModel application)
+        {
+            if (!IsValid(_sudokuFiled))
+                return;
+            Solve(_sudokuFiled, application);
+        }
+
+        private bool Solve(int[][] arr,ApplicationViewModel application)
+        {
+
             if (IsWin(arr) && IsValid(arr))
                 return true;
-
-            point = GetZeroPoint(arr);
-            int row = point.Item1;
-            int col = point.Item2;
+            _point = GetZeroPoint(arr);
+            int row = _point.Item1;
+            int col = _point.Item2;
 
             for (int num = 1; num <= 9; num++)
             {
                 if (IsValid(arr))
                 {
                     arr[row][col] = num;
-
-                    if (Solve(arr))
+                    application.OnPropertyChanged("");
+                    if (Solve(arr,application))
                     {
                         return true;
                     }
@@ -53,7 +72,7 @@ namespace ConsoleApp3
             return false;
         }
 
-        static void ShowSuduko(int[][] arr)
+        private void ShowSuduko(int[][] arr)
         {
             for (int i = 0; i < arr.Length; i++)
             {
@@ -66,7 +85,7 @@ namespace ConsoleApp3
             }
         }
 
-        static bool IsWin(int[][] arr)
+        private static bool IsWin(int[][] arr)
         {
             for (int i = 0; i < arr.Length; i++)
             {
@@ -80,12 +99,12 @@ namespace ConsoleApp3
             return true;
         }
 
-        static bool IsValid(int[][] arr)
+        private bool IsValid(int[][] arr)
         {
             return IsValidByHorizontal(arr) && IsValidByVertical(arr) && IsValidBox(arr);
         }
 
-        static (int, int) GetZeroPoint(int[][] arr)
+        private (int, int) GetZeroPoint(int[][] arr)
         {
             for (int row = 0; row < arr.Length; row++)
                 for (int col = 0; col < arr[row].Length; col++)
@@ -96,13 +115,13 @@ namespace ConsoleApp3
             return (9, 9);
         }
 
-        static bool IsValidByHorizontal(int[][] arr)
+        private bool IsValidByHorizontal(int[][] arr)
         {
             var res = arr.All(a => IsValidList(a.ToList()));
             return res;
         }
 
-        static bool IsValidByVertical(int[][] arr)
+        private bool IsValidByVertical(int[][] arr)
         {
             var list = new List<int>();
             for (int i = 0; i < arr.Length; i++)
@@ -119,7 +138,7 @@ namespace ConsoleApp3
             return true;
         }
 
-        static bool IsValidBox(int[][] arr)
+        private bool IsValidBox(int[][] arr)
         {
             var list = new List<int>();
             var res = new List<int>();
@@ -149,10 +168,11 @@ namespace ConsoleApp3
             return true;
         }
 
-        static bool IsValidList(List<int> list)
+        private bool IsValidList(List<int> list)
         {
             var listWithoutZero = list.Where(i => i != 0).ToList();
             return listWithoutZero.Count == listWithoutZero.Distinct().Count();
         }
+
     }
 }

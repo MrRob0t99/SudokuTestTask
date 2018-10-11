@@ -71,6 +71,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Model\SudokuModel.cs" />
+    <Compile Include="MyCommand.cs" />
     <Compile Include="ViewModel\ApplicationViewModel.cs" />
     <Compile Include="View\InputPanel.xaml.cs">
       <DependentUpon>InputPanel.xaml</DependentUpon>

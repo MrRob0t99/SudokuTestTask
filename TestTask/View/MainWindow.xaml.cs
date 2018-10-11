@@ -1,14 +1,20 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Input;
+using TestTask.My;
 
 
 namespace TestTask
 {
     public partial class MainWindow : Window
     {
+        public ApplicationViewModel ApplicationViewModel { get; set; } = new ApplicationViewModel();
+
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = ApplicationViewModel;
             Res();
         }
 
@@ -24,42 +30,48 @@ namespace TestTask
                 int innerRow = 0;
                 for (int j = 0; j < 3; j++)
                 {
-                    grid.ColumnDefinitions.Add(new ColumnDefinition() );
+                    grid.ColumnDefinitions.Add(new ColumnDefinition());
                     grid.RowDefinitions.Add(new RowDefinition());
                 }
 
                 grid.ShowGridLines = true;
                 for (int j = 1; j < 10; j++)
                 {
-                    grid.Children.Add(button); 
-                    button.Content = "Binding Cell";
+                    grid.Children.Add(button);
+                    button.Name = "Cell" + i + j;
+                    Binding binding = new Binding();
+                    binding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                    binding.Mode = BindingMode.TwoWay;
+                    binding.Path = new PropertyPath("Cell" + i + j);
+                    button.SetBinding(Button.ContentProperty, binding);
+                    button.SetBinding(Button.CommandProperty, new Binding("ShowCommand"));
+                    button.SetValue(Button.CommandParameterProperty,"Cell" + i + j);
                     Grid.SetRow(button, innerRow);
                     Grid.SetColumn(button, innerCol);
                     innerCol++;
+
                     if (j != 0 && j % 3 == 0)
                         innerRow++;
+
                     if (innerCol == 3)
                         innerCol = 0;
+
                     button = new Button();
                 }
 
+                myGrid.Children.Add(grid);
+                Grid.SetRow(grid, row);
+                Grid.SetColumn(grid, col);
                 col++;
                 if (i != 0 && i % 3 == 0)
                     row++;
                 if (col == 3)
                     col = 0;
-                myGrid.Children.Add(grid);
-                Grid.SetRow(grid, row);
-                Grid.SetColumn(grid, col);
                 grid = new Grid();
             }
-            //var button = myGrid.Children
-            //    .Cast<Button>()
-            //    .First(e => Grid.GetRow(e) == 0 && Grid.GetColumn(e) == 0);
-
         }
 
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
 
         }
