@@ -37,7 +37,7 @@
             <Button Command="{Binding ChangeValue}" CommandParameter="9"  Grid.Row="2" Grid.Column="2" Content="9"/>
         </Grid>
 
-        <Button Margin="2,2,2,5" Content="Clear" Command="{Binding ChangeValue}" CommandParameter="0"/>
+        <Button Margin="2,2,2,5" Content="Clean" Command="{Binding ChangeValue}" CommandParameter="0"/>
 
     </StackPanel>
 </Window>

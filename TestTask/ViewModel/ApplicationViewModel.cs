@@ -1,7 +1,7 @@
 ﻿using System;
 using ConsoleApp3;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -10,78 +10,135 @@ namespace TestTask.My
 {
     public class ApplicationViewModel : INotifyPropertyChanged
     {
-        private  Sudoku _sudoku;
+        #region Private Fields
+
+        private readonly Sudoku _sudoku;
+        private string NameProperty { get; set; }
+        private InputPanel InputPanel { get; set; }
+        private readonly bool _canExecute;
         private int[][] arr;
+        private ICommand _startCommand;
+        private ICommand _inputCommand;
+        private ICommand _changeValueCommand;
+        private ICommand _cleanCommand;
+        private ICommand _stopCommand;
+        private bool _canChangeValue = true;
+        private CancellationTokenSource source = new CancellationTokenSource();
+
+        #endregion
+
+        #region Ctor
+
         public ApplicationViewModel()
         {
             _sudoku = new Sudoku();
             _canExecute = true;
         }
 
-        private ICommand _clickCommand;
-        private ICommand _showCommand;
-        private ICommand _changeValue;
-        private ICommand _clean;
-        public ICommand ClickCommand
+        #endregion
+
+        #region CommandProperty
+
+        public ICommand StartCommand
         {
             get
             {
-                return _clickCommand ?? (_clickCommand = new CommandHandler((x) => MyAction(), _canExecute));
+                return _startCommand ?? (_startCommand = new CommandHandler((x) => Start(), _canExecute));
             }
         }
-
         public ICommand ShowCommand
         {
             get
             {
-                return _showCommand ?? (_showCommand = new CommandHandler((obj) => ShowInputPanel(obj), _canExecute));
+                return _inputCommand ?? (_inputCommand = new CommandHandler((obj) => ShowInputPanel(obj), _canExecute));
             }
         }
         public ICommand CleanCommand
         {
             get
             {
-                return _clean ?? (_clean = new CommandHandler((obj) => Clean(), _canExecute));
+                return _cleanCommand ?? (_cleanCommand = new CommandHandler((obj) => Clean(), _canExecute));
             }
         }
         public ICommand ChangeValue
         {
             get
             {
-                return _changeValue ?? (_changeValue = new CommandHandler((x) => Change(x), _canExecute));
+                return _changeValueCommand ?? (_changeValueCommand = new CommandHandler((x) => Change(x), _canExecute));
+            }
+        }
+        public ICommand StopCommand
+        {
+            get
+            {
+                return _stopCommand ?? (_stopCommand = new CommandHandler((x) => Stop(), _canExecute));
             }
         }
 
-        public void Clean()
+        #endregion
+
+        #region Private Method
+
+        private void Clean()
         {
-            _sudoku.Clean();
-            OnPropertyChanged("");
+            if (_canChangeValue)
+            {
+                _sudoku.Clean();
+                OnPropertyChanged();
+            }
         }
-        public void Change(object value)
+
+        private void Change(object value)
         {
-            var Ivalue = Convert.ToInt32(value);
-            this.GetType().GetProperty(NameProperty).SetValue(this, Ivalue);
-            InputPanel.Close();
+            if (value != null)
+            {
+                this.GetType().GetProperty(NameProperty).SetValue(this, Convert.ToInt32(value));
+                InputPanel.Close();
+            }
         }
-        private string NameProperty { get; set; }
-        private InputPanel InputPanel { get; set; }
+
         private void ShowInputPanel(object x)
         {
-            NameProperty = x as string;
-            InputPanel = new InputPanel(this);
-            InputPanel.ShowDialog();
+            if (_canChangeValue)
+            {
+                NameProperty = x as string;
+                InputPanel = new InputPanel(this);
+                InputPanel.ShowDialog();
+            }
         }
 
-        private readonly bool _canExecute;
-        public void MyAction()
+        private async Task Start()
         {
-           Task.Factory.StartNew(() => _sudoku.Start(this,false)).GetAwaiter();
+            _canChangeValue = false;
+            var res = await Task.Factory.StartNew(() => _sudoku.Start(this, CheckBoxIsChecked,source.Token));
+            if (res==0)
+            {
+                MessageBox.Show("There is no solution");
+            }
+            if (res == 1)
+            {
+                MessageBox.Show("Cancel");
+            }
+            _canChangeValue = true;
+            source = new CancellationTokenSource();
         }
 
-        public bool CheckBoxIsChecked { get; set; } = true;
+        private void Stop()
+        {
+            if (!_canChangeValue)
+            {
+                source.Cancel();
+                _sudoku.Clean();
+            }
+        }
+
+        #endregion
+
+        #region Implementation INotifyPropertyChanged
+
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public void OnPropertyChanged([CallerMemberName]string propertyName = null)
+        public void OnPropertyChanged(string propertyName = "")
         {
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null)
@@ -91,7 +148,10 @@ namespace TestTask.My
             }
         }
 
-        #region PropertyCell
+        #endregion
+
+        #region PropertyBinding
+        public bool CheckBoxIsChecked { get; set; } = true;
 
         public int Cell11
         {
@@ -1250,7 +1310,7 @@ namespace TestTask.My
                 if (value != _sudoku[7, 7])
                 {
                     _sudoku[7, 7] = value;
-                    OnPropertyChanged("Cell77");
+                    OnPropertyChanged("Cell95");
                 }
             }
         }

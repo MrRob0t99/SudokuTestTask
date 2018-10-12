@@ -23,19 +23,9 @@ namespace TestTask
         {
             var grid = new Grid();
             var button = new Button();
+            var binding = new Binding();
             int col = 0;
             int row = 0;
-            Border brdr = new Border()
-            {
-                BorderThickness = new Thickness()
-                {
-                    Bottom = 1,
-                    Left = 1,
-                    Right = 1,
-                    Top = 1
-                },
-                BorderBrush = new SolidColorBrush(Colors.Black)
-            };
 
             for (int i = 1; i < 10; i++)
             {
@@ -46,13 +36,13 @@ namespace TestTask
                     grid.ColumnDefinitions.Add(new ColumnDefinition());
                     grid.RowDefinitions.Add(new RowDefinition());
                 }
-
                 grid.ShowGridLines = true;
+
                 for (int j = 1; j < 10; j++)
                 {
                     grid.Children.Add(button);
                     button.Name = "Cell" + i + j;
-                    Binding binding = new Binding();
+                    binding = new Binding();
                     binding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
                     binding.Mode = BindingMode.TwoWay;
                     binding.Path = new PropertyPath("Cell" + i + j);
@@ -71,7 +61,6 @@ namespace TestTask
 
                     button = new Button();
                 }
-
                 myGrid.Children.Add(grid);
                 Grid.SetRow(grid, row);
                 Grid.SetColumn(grid, col);

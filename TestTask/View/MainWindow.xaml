@@ -6,32 +6,32 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TestTask.My"
         mc:Ignorable="d"
+        ResizeMode="NoResize"
+        Title="MainWindow" Height="454" Width="773">
 
-        Title="MainWindow" Height="500" Width="800">
-
-    <Grid Margin="0,0,0,114" HorizontalAlignment="Left" Width="614" Height="358" VerticalAlignment="Bottom">
+    <Grid Margin="0,0,0,0" HorizontalAlignment="Left" Width="614" Height="358" VerticalAlignment="Bottom">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="465*"/>
             <ColumnDefinition Width="149*"/>
         </Grid.ColumnDefinitions>
-        <Border BorderBrush="Black" BorderThickness="2" Grid.ColumnSpan="2">
-            <Grid ShowGridLines="True" x:Name="myGrid"  HorizontalAlignment="Right" Width="614" Margin="0,0,-8,-3" Height="354" VerticalAlignment="Bottom">
-                <Grid.RowDefinitions>
-                    <RowDefinition></RowDefinition>
-                    <RowDefinition></RowDefinition>
-                    <RowDefinition></RowDefinition>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition></ColumnDefinition>
-                    <ColumnDefinition></ColumnDefinition>
-                    <ColumnDefinition></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-            </Grid>
-        </Border>
-        <StackPanel Height="350"  Margin="155,5,-161,0" Grid.Column="1">
-            <Button x:Name="start" Command="{Binding ClickCommand}" Height="45" Content="Start" Margin="15,0,25,0" Click="Button_Click"/>
-            <Button x:Name="clear" Command="{Binding CleanCommand}" Height="50" Content="Clear" Margin="0,0,25,0" HorizontalAlignment="Right" Width="115"/>
-            <CheckBox Content="CheckBox"  IsChecked="{Binding Path=CheckBoxIsChecked ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged }"/>
+        <Grid ShowGridLines="True" x:Name="myGrid"  HorizontalAlignment="Right" Width="614" Margin="0,-25,-11,29" Height="354" VerticalAlignment="Bottom" Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+        </Grid>
+        <StackPanel Height="350"  Margin="155,50,-161,-42" Grid.Column="1">
+            <Button x:Name="start" Command="{Binding StartCommand}" Height="45" Content="Start" Margin="15,0,25,0"/>
+            <Button x:Name="clear_Copy" Command="{Binding StopCommand}" Height="49" Content="Stop" Margin="0,0,25,0" HorizontalAlignment="Right" Width="115"/>
+            <Button x:Name="clear" Command="{Binding CleanCommand}" Height="50" Content="Clean" Margin="0,0,25,0" HorizontalAlignment="Right" Width="115"/>
+
+            <CheckBox Content="StepMode"  IsChecked="{Binding Path=CheckBoxIsChecked ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged }" Margin="15,0,25,0"/>
         </StackPanel>
     </Grid>
 
