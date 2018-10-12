@@ -88,7 +88,7 @@ namespace ConsoleApp3
             return false;
         }
 
-        private static bool IsWin(int[][] arr)
+        private bool IsWin(int[][] arr)
         {
             for (int i = 0; i < arr.Length; i++)
             {
