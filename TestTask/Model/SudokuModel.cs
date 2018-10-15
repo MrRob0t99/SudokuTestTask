@@ -3,17 +3,31 @@ using System.Linq;
 using System.Threading;
 using TestTask.My;
 
-
 namespace ConsoleApp3
 {
     class Sudoku
     {
+        #region Private Field
 
         private (int, int) _point;
         private ApplicationViewModel _applicationViewModel;
         private CancellationToken _cancellationToken;
-        private int[][] _sudokuFiled { get; set; }
+        private int[][] _sudokuFiled;
         private bool _isUpdate;
+        
+        #endregion
+
+        #region Ctor
+
+        public Sudoku()
+        {
+            Clean();
+        }
+
+        #endregion
+
+        #region Indexer
+
         public int this[int col, int row]
         {
             get
@@ -27,10 +41,9 @@ namespace ConsoleApp3
             }
         }
 
-        public Sudoku()
-        {
-            Clean();
-        }
+        #endregion
+
+        #region Public Method
 
         public void Clean()
         {
@@ -56,6 +69,10 @@ namespace ConsoleApp3
             return 2;
         }
 
+        #endregion
+
+        #region Private Method
+
         private bool Solve(int[][] arr)
         {
             if (_cancellationToken.IsCancellationRequested)
@@ -63,6 +80,7 @@ namespace ConsoleApp3
 
             if (IsWin(arr) && IsValid(arr))
                 return true;
+
             _point = GetZeroPoint(arr);
             int row = _point.Item1;
             int col = _point.Item2;
@@ -72,18 +90,22 @@ namespace ConsoleApp3
                 if (IsValid(arr))
                 {
                     arr[row][col] = num;
-                    if(_isUpdate)
-                    _applicationViewModel.OnPropertyChanged();
+
+                    if (_isUpdate)
+                        _applicationViewModel.OnPropertyChanged();
+
                     if (Solve(arr))
                     {
                         return true;
                     }
                     arr[row][col] = 0;
+
                     if (_isUpdate)
                         _applicationViewModel.OnPropertyChanged();
                 }
+
                 if (_isUpdate)
-                    Thread.Sleep(1);
+                    Thread.Sleep(2);
             }
             return false;
         }
@@ -177,5 +199,6 @@ namespace ConsoleApp3
             return listWithoutZero.Count == listWithoutZero.Distinct().Count();
         }
 
+        #endregion
     }
 }

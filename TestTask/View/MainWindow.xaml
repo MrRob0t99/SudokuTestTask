@@ -26,13 +26,15 @@
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
         </Grid>
-        <StackPanel Height="350"  Margin="155,50,-161,-42" Grid.Column="1">
+        <StackPanel  Margin="155,25,-161,163" Grid.Column="1">
             <Button x:Name="start" Command="{Binding StartCommand}" Height="45" Content="Start" Margin="15,0,25,0"/>
             <Button x:Name="clear_Copy" Command="{Binding StopCommand}" Height="49" Content="Stop" Margin="0,0,25,0" HorizontalAlignment="Right" Width="115"/>
             <Button x:Name="clear" Command="{Binding CleanCommand}" Height="50" Content="Clean" Margin="0,0,25,0" HorizontalAlignment="Right" Width="115"/>
 
             <CheckBox Content="StepMode"  IsChecked="{Binding Path=CheckBoxIsChecked ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged }" Margin="15,0,25,0"/>
         </StackPanel>
+
+        <Button Margin="170,280,-136,28" Grid.Column="1" Content="Exit" Command="{Binding ExitCommand}"/>
     </Grid>
 
 </Window>

@@ -20,6 +20,9 @@ public class CommandHandler : ICommand
 
     public void Execute(object parameter)
     {
-        _action(parameter);
+        if (_canExecute)
+        {
+            _action(parameter);
+        }
     }
 }

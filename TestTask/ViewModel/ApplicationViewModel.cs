@@ -13,17 +13,17 @@ namespace TestTask.My
         #region Private Fields
 
         private readonly Sudoku _sudoku;
-        private string NameProperty { get; set; }
-        private InputPanel InputPanel { get; set; }
+        private string _propertyName;
+        private InputPanel _inputPanel;
         private readonly bool _canExecute;
-        private int[][] arr;
         private ICommand _startCommand;
         private ICommand _inputCommand;
         private ICommand _changeValueCommand;
         private ICommand _cleanCommand;
         private ICommand _stopCommand;
+        private ICommand _exitCommand;
         private bool _canChangeValue = true;
-        private CancellationTokenSource source = new CancellationTokenSource();
+        private CancellationTokenSource _sourceToken;
 
         #endregion
 
@@ -33,6 +33,7 @@ namespace TestTask.My
         {
             _sudoku = new Sudoku();
             _canExecute = true;
+            _sourceToken = new CancellationTokenSource();
         }
 
         #endregion
@@ -74,7 +75,13 @@ namespace TestTask.My
                 return _stopCommand ?? (_stopCommand = new CommandHandler((x) => Stop(), _canExecute));
             }
         }
-
+        public ICommand ExitCommand
+        {
+            get
+            {
+                return _exitCommand ?? (_exitCommand = new CommandHandler((x) => Exit(), _canExecute));
+            }
+        }
         #endregion
 
         #region Private Method
@@ -92,8 +99,8 @@ namespace TestTask.My
         {
             if (value != null)
             {
-                this.GetType().GetProperty(NameProperty).SetValue(this, Convert.ToInt32(value));
-                InputPanel.Close();
+                this.GetType().GetProperty(_propertyName).SetValue(this, Convert.ToInt32(value));
+                _inputPanel.Close();
             }
         }
 
@@ -101,16 +108,16 @@ namespace TestTask.My
         {
             if (_canChangeValue)
             {
-                NameProperty = x as string;
-                InputPanel = new InputPanel(this);
-                InputPanel.ShowDialog();
+                _propertyName = x as string;
+                _inputPanel = new InputPanel(this);
+                _inputPanel.ShowDialog();
             }
         }
 
         private async Task Start()
         {
             _canChangeValue = false;
-            var res = await Task.Factory.StartNew(() => _sudoku.Start(this, CheckBoxIsChecked,source.Token));
+            var res = await Task.Factory.StartNew(() => _sudoku.Start(this, CheckBoxIsChecked,_sourceToken.Token));
             if (res==0)
             {
                 MessageBox.Show("There is no solution");
@@ -120,18 +127,22 @@ namespace TestTask.My
                 MessageBox.Show("Cancel");
             }
             _canChangeValue = true;
-            source = new CancellationTokenSource();
+            _sourceToken = new CancellationTokenSource();
         }
 
         private void Stop()
         {
             if (!_canChangeValue)
             {
-                source.Cancel();
+                _sourceToken.Cancel();
                 _sudoku.Clean();
             }
         }
 
+        private void Exit()
+        {
+            Application.Current.Shutdown();
+        }
         #endregion
 
         #region Implementation INotifyPropertyChanged
