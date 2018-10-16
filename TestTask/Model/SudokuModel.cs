@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using TestTask.My;
@@ -10,11 +12,12 @@ namespace ConsoleApp3
         #region Private Field
 
         private (int, int) _point;
-        private ApplicationViewModel _applicationViewModel;
         private CancellationToken _cancellationToken;
         private int[][] _sudokuFiled;
         private bool _isUpdate;
-        
+
+        public event Action<string> Change;
+
         #endregion
 
         #region Ctor
@@ -54,10 +57,9 @@ namespace ConsoleApp3
             }
         }
 
-        public int Start(ApplicationViewModel application, bool IsStep, CancellationToken cancellationToken)
+        public int Start(bool IsStep, CancellationToken cancellationToken)
         {
             _cancellationToken = cancellationToken;
-            _applicationViewModel = application;
             _isUpdate = IsStep;
             if (!IsValid(_sudokuFiled))
                 return 0;
@@ -65,7 +67,7 @@ namespace ConsoleApp3
                 return 0;
             if (_cancellationToken.IsCancellationRequested)
                 return 1;
-            _applicationViewModel.OnPropertyChanged();
+            Change("");
             return 2;
         }
 
@@ -92,7 +94,7 @@ namespace ConsoleApp3
                     arr[row][col] = num;
 
                     if (_isUpdate)
-                        _applicationViewModel.OnPropertyChanged();
+                        Change("");
 
                     if (Solve(arr))
                     {
@@ -101,7 +103,7 @@ namespace ConsoleApp3
                     arr[row][col] = 0;
 
                     if (_isUpdate)
-                        _applicationViewModel.OnPropertyChanged();
+                        Change("");
                 }
 
                 if (_isUpdate)

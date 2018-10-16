@@ -32,6 +32,7 @@ namespace TestTask.My
         public ApplicationViewModel()
         {
             _sudoku = new Sudoku();
+            _sudoku.Change+= OnPropertyChanged;
             _canExecute = true;
             _sourceToken = new CancellationTokenSource();
         }
@@ -117,7 +118,7 @@ namespace TestTask.My
         private async Task Start()
         {
             _canChangeValue = false;
-            var res = await Task.Factory.StartNew(() => _sudoku.Start(this, CheckBoxIsChecked,_sourceToken.Token));
+            var res = await Task.Factory.StartNew(() => _sudoku.Start(CheckBoxIsChecked,_sourceToken.Token));
             if (res==0)
             {
                 MessageBox.Show("There is no solution");
