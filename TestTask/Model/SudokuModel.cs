@@ -105,9 +105,6 @@ namespace ConsoleApp3
                     if (_isUpdate)
                         Change("");
                 }
-
-                if (_isUpdate)
-                    Thread.Sleep(1);
             }
             return false;
         }

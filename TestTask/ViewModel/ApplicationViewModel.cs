@@ -145,7 +145,7 @@ namespace TestTask.My
             Application.Current.Shutdown();
         }
         #endregion
-
+        
         #region Implementation INotifyPropertyChanged
 
         public event PropertyChangedEventHandler PropertyChanged;
